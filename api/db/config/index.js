@@ -8,7 +8,7 @@ const db = mariadb.createPool({
   port: process.env.DB_PORT,
   user: process.env.DB_USER,
   password: process.env.DB_PASS,
-  database: "balady-ai",
+  database: "balady",
   connectionLimit: 10,
 });
 
