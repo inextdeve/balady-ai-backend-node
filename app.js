@@ -2,8 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import auth from "./api/routes/auth.js";
-import { db } from "./api/db/config/index.js";
-
+import api from "./api/routes/api.js";
 dotenv.config();
 
 const app = express();
@@ -14,8 +13,10 @@ app.use(express.json());
 
 app.use("/auth", auth);
 
+app.use("/api", api);
+
 app.get("/", async (req, res) => {
-  res.status(500);
+  res.status(200).json({ suc: "treu" });
 });
 
 //if db connection resolved listen to port 3000

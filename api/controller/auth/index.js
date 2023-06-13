@@ -1,29 +1,40 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { db } from "../../db/config/index.js";
-import { userValidation, authValidation } from "../../validations/auth.js";
+import {
+  userValidation,
+  authValidation,
+  AuthenticationError,
+} from "../../validations/auth.js";
 
 const login = async (req, res) => {
   const { username, password } = req.body;
 
-  const validation = await authValidation(username, password);
+  try {
+    const validation = await authValidation(username, password);
 
-  if (validation.valid) {
-    const user = validation.payload;
-    // Create token
-    const token = jwt.sign(
-      { user_id: user._id, email },
-      process.env.TOKEN_KEY,
-      {
-        expiresIn: "2h",
-      }
-    );
+    if (validation.valid) {
+      const user = validation.payload;
+      // Create token
+      const token = jwt.sign(
+        { userId: user.userId, username: user.username },
+        process.env.TOKEN_KEY,
+        {
+          expiresIn: "2h",
+        }
+      );
 
-    // save user token
-    user.token = token;
+      // save user token
+      user.token = token;
+      res.status(200).json(user);
+    }
+  } catch (error) {
+    if (error instanceof AuthenticationError) {
+      res.status(404).json({ error: error.message });
+    } else {
+      res.status(500);
+    }
   }
-
-  res.json({ login: "success" });
 };
 
 const register = async (req, res) => {
@@ -31,22 +42,26 @@ const register = async (req, res) => {
 
   const validation = await userValidation(username);
 
-  try {
-    if (!validation.valid) {
-      const hashedPassword = await bcrypt.hash(password, process.env.SALT);
+  //If the username does not exist in the DB validation.valid return `false`
+  if (!validation.valid) {
+    try {
+      const salt = parseInt(process.env.SALT);
+      const hashedPassword = await bcrypt.hash(password, salt);
       const dbQuery =
-        "insert into system_users (firstName, lastName, username, password) values (?, ?, ?, ?)";
+        "insert into users (firstName, lastName, username, password) values (?, ?, ?, ?)";
       const data = await db.query(dbQuery, [
         firstName,
         lastName,
         username,
         hashedPassword,
       ]);
-      res.json({ data });
+
+      res.json({ id: parseInt(data.insertId) });
+    } catch (error) {
+      res.status(500);
     }
-  } catch (error) {
-    console.log(error);
-    res.json({ error: "internal error 500" });
+  } else {
+    res.json({ error: "Username exist" });
   }
 };
 
