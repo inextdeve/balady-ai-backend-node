@@ -6,7 +6,6 @@ const tokenValidation = async (token) => {
       return { valid: true, payload: decodedData?.userId };
     }
   } catch (error) {
-    console.log(error);
     return { valid: false, payload: error };
   }
 };
