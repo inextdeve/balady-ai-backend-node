@@ -6,6 +6,7 @@ import {
   authValidation,
   AuthenticationError,
 } from "../../validations/auth.js";
+import { getUserById } from "../../util/users.js";
 
 const login = async (req, res) => {
   const { username, password } = req.body;
@@ -25,7 +26,7 @@ const login = async (req, res) => {
       );
 
       // save user token
-      user.token = token;
+      user.userToken = token;
       res.status(200).json(user);
     }
   } catch (error) {
@@ -65,4 +66,14 @@ const register = async (req, res) => {
   }
 };
 
-export { login, register };
+const session = async (req, res) => {
+  try {
+    const user = await getUserById(req.userId);
+    res.json(user);
+  } catch (error) {
+    console.log(error);
+    res.status(500);
+  }
+};
+
+export { login, register, session };

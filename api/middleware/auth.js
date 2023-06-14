@@ -1,20 +1,19 @@
-import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-dotenv.config();
+import tokenValidation from "../validations/token.js";
 
-export const auth = async (req, res, next) => {
+const auth = async (req, res, next) => {
+  const token = req.headers.authorization.split(" ")[1];
+  const tokenValid = await tokenValidation(token);
+
   try {
-    const token = req.headers.authorization.split(" ")[1];
-
-    if (token) {
-      const decodedData = jwt.verify(token, process.env.TOKEN_KEY);
-
-      req.userId = decodedData?.userId;
+    if (tokenValid.valid) {
+      req.userId = tokenValid.payload;
+      next();
+    } else {
+      throw new Error("Token not valid");
     }
-
-    next();
   } catch (error) {
-    res.status(401).json({ error: error.message });
+    console.log(error);
+    res.status(401).json({ error });
   }
 };
 
