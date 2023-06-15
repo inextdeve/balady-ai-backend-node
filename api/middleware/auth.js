@@ -9,7 +9,7 @@ const auth = async (req, res, next) => {
     req.userId = tokenValid.payload;
     next();
   } catch (error) {
-    res.status(401).json({ error });
+    res.status(401).json({ error: error.message });
   }
 };
 

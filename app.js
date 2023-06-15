@@ -17,7 +17,14 @@ app.use("/auth", auth);
 app.use("/api", api);
 
 app.get("/", async (req, res) => {
-  res.status(200).json({ suc: "treu" });
+
+  // const query = "SELECT * FROM cameras";
+
+  // const data = await db.query(query);
+
+  // console.log(JSON.parse(JSON.stringify(data)))
+
+  res.status(200).json({"data": "s"});
 });
 
 //if db connection resolved listen to port 3000
