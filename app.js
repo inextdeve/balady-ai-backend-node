@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import auth from "./api/routes/auth.js";
 import api from "./api/routes/api.js";
+import { db } from "./api/db/config/index.js";
 dotenv.config();
 
 const app = express();

@@ -1,16 +1,11 @@
 import { db } from "../db/config/index.js";
 const getUserById = async (userId) => {
-  console.log("ID", userId);
-  try {
-    const dbQuery = "select * from users where userId = ?";
+  const dbQuery = "select * from users where userId = ?";
 
-    const data = await db.query(dbQuery, [userId]);
-    console.log(data);
-    if (data.length > 0) {
-      return { ...data[0], userId: parseInt(data[0].userId) };
-    }
-  } catch (error) {
-    console.log(error);
+  const data = await db.query(dbQuery, [userId]);
+  if (data.length > 0) {
+    delete data[0].password;
+    return { ...data[0], userId: parseInt(data[0].userId) };
   }
 };
 
