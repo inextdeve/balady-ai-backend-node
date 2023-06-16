@@ -9,4 +9,13 @@ const getUserById = async (userId) => {
   }
 };
 
-export { getUserById };
+const getCameraById = async (id) => {
+  const dbQuery = "select * from cameras where id = ?";
+
+  const data = await db.query(dbQuery, [id]);
+  if (data.length > 0) {
+    return { ...data[0] };
+  }
+};
+
+export { getUserById, getCameraById };

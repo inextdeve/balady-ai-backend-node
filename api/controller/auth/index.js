@@ -6,7 +6,7 @@ import {
   authValidation,
   AuthenticationError,
 } from "../../validations/auth.js";
-import { getUserById } from "../../util/users.js";
+import { getUserById } from "../../util/simpleQueries.js";
 
 const login = async (req, res) => {
   const { username, password } = req.body;
