@@ -18,6 +18,7 @@ const addCamera = async (req, res) => {
 
   try {
     const dbQuery = `INSERT INTO cameras(name, auth) VALUES ('${name}', '{"username": "", "password": ""}')`;
+    console.log(dbQuery);
     const data = await db.query(dbQuery);
 
     if (data.affectedRows > 0) {
@@ -51,6 +52,8 @@ const updateCamera = async (req, res) => {
   Object.keys(body).forEach((key, index, array) => {
     if (typeof body[key] === "object") {
       keyValue += `${key}='${JSON.stringify(body[key])}'`;
+    } else if (typeof body[key] === "boolean") {
+      keyValue += `${key}='${Number(body[key])}'`;
     } else {
       keyValue += `${key}='${body[key]}'`;
     }
@@ -59,7 +62,6 @@ const updateCamera = async (req, res) => {
 
     keyValue += ",";
   });
-  console.log(keyValue);
 
   try {
     const dbQuery = `UPDATE cameras SET ${keyValue} WHERE id = ?`;
