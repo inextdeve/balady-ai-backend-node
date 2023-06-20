@@ -38,7 +38,7 @@ const removeCamera = async (req, res) => {
   try {
     const dbQuery = "DELETE FROM cameras WHERE id = ?";
     const data = await db.query(dbQuery, [id]);
-    res.json({ removed: true });
+    res.json({ id });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
