@@ -18,4 +18,12 @@ const getCameraById = async (id) => {
   }
 };
 
-export { getUserById, getCameraById };
+const getRowById = async (database, id) => {
+  const dbQuery = `select * from ${database} where id = ${id}`;
+  const data = await db.query(dbQuery);
+  if (data.length > 0) {
+    return { ...data[0] };
+  }
+};
+
+export { getUserById, getCameraById, getRowById };

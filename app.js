@@ -20,5 +20,6 @@ app.use(express.json());
 app.use("/auth", auth);
 
 app.use("/api", api);
+
 //if db connection resolved listen to port 3000
 app.listen(process.env.APP_PORT);
