@@ -6,10 +6,12 @@ const getCameras = async (req, res) => {
   try {
     const dbQuery = "SELECT * FROM cameras";
     const data = await db.query(dbQuery);
-
-    res.json(parseJson(data));
+    console.log(data);
+    return res.json(data);
+    return res.json(parseJson(data));
   } catch (error) {
-    res.status(500).json({ error: "Internal Server Error" });
+    console.log("Error", error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
