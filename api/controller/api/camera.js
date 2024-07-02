@@ -1,13 +1,13 @@
 import parseJson from "../../util/parseJson.js";
 import { db } from "../../db/config/index.js";
 import { getCameraById } from "../../util/simpleQueries.js";
+import { updateStreamServer } from "../../util/stream-server.js";
 
 const getCameras = async (req, res) => {
   try {
     const dbQuery = "SELECT * FROM cameras";
     const data = await db.query(dbQuery);
-    console.log(data);
-    return res.json(data);
+    // return res.json(data);
     return res.json(parseJson(data));
   } catch (error) {
     console.log("Error", error);
@@ -15,7 +15,7 @@ const getCameras = async (req, res) => {
   }
 };
 
-const addCamera = async (req, res) => {
+const addCamera = async (req, res, next) => {
   const { name } = req.body;
 
   try {
@@ -26,6 +26,7 @@ const addCamera = async (req, res) => {
     if (data.affectedRows > 0) {
       const cameraData = await getCameraById(parseInt(data.insertId));
       res.json(parseJson(cameraData));
+      next(cameraData.id);
     } else {
       throw new Error("Internal server error");
     }
@@ -34,19 +35,20 @@ const addCamera = async (req, res) => {
   }
 };
 
-const removeCamera = async (req, res) => {
+const removeCamera = async (req, res, next) => {
   const { id } = req.body;
 
   try {
     const dbQuery = "DELETE FROM cameras WHERE id = ?";
     const data = await db.query(dbQuery, [id]);
     res.json({ id });
+    next(id);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-const updateCamera = async (req, res) => {
+const updateCamera = async (req, res, next) => {
   const body = req.body;
 
   let keyValue = "";
@@ -70,6 +72,8 @@ const updateCamera = async (req, res) => {
     await db.query(dbQuery, [body.id]);
 
     res.json({ updated: true });
+
+    await updateStreamServer(body.id);
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: error.message });
